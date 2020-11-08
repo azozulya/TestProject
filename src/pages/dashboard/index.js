@@ -24,8 +24,9 @@ export default class Page {
   }
 
   async updateTableComponent (from, to) {
-    const data = await fetchJson(`${process.env.BACKEND_URL}api/dashboard/bestsellers?_start=1&_end=20&from=${from.toISOString()}&to=${to.toISOString()}`);
-    this.components.sortableTable.addRows(data);
+    const { field, order } = this.components.sortableTable.sorted;
+    const data = await fetchJson(`${process.env.BACKEND_URL}api/dashboard/bestsellers?_sort=${field}&_order=${order}&_start=1&_end=20&from=${from.toISOString()}&to=${to.toISOString()}&`);
+    this.components.sortableTable.addTable(data);
   }
 
   async updateChartsComponents (from, to) {
@@ -51,26 +52,26 @@ export default class Page {
 
     const sortableTable = new SortableTable(header, {
       url: `api/dashboard/bestsellers?_start=1&_end=20&from=${from.toISOString()}&to=${to.toISOString()}`,
-      isSortLocally: true
+      isSortOnServer: false
     });
 
     const ordersChart = new ColumnChart({
       data: ordersData,
       label: 'orders',
-      value: ordersData.reduce((accum, item) => accum + item),
+      value: ordersData.reduce((accum, item) => accum + item, 0),
       link: '#'
     });
 
     const salesChart = new ColumnChart({
       data: salesData,
       label: 'sales',
-      value: '$' + salesData.reduce((accum, item) => accum + item),
+      value: '$' + salesData.reduce((accum, item) => accum + item, 0),
     });
 
     const customersChart = new ColumnChart({
       data: customersData,
       label: 'customers',
-      value: customersData.reduce((accum, item) => accum + item),
+      value: customersData.reduce((accum, item) => accum + item, 0),
     });
 
     this.components.sortableTable = sortableTable;
