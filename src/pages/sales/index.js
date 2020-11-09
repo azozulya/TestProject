@@ -2,11 +2,13 @@ import SortableTable from '../../components/sortable-table';
 import RangePicker from '../../components/range-picker';
 
 import header from '../sales/sales-header';
+import fetchJson from '../../utils/fetch-json';
 
 export default class Page {
   element;
   subElements = {};
   components = {};
+  rowCount = 10;
 
   async render() {
     const element = document.createElement('div');
@@ -18,19 +20,11 @@ export default class Page {
     await this.initComponents();
 
     this.renderComponents();
+    this.initEventListeners();
 
     return this.element;
-
-    // const url = new URL(`${process.env['BACKEND_URL ']}`);
-    // createdAt_gte: 2020-09-01T19:22:57.164Z
-    // createdAt_lte: 2020-10-31T20:22:57.164Z
-    // _sort: createdAt
-    // _order: desc
-    // _start: 0
-    // _end: 30
-
-
   }
+
   get template () {
     return `
       <div class="sales full-height flex-column">
@@ -52,10 +46,10 @@ export default class Page {
     const from = new Date(to.getTime() - (30 * 24 * 60 * 60 * 1000));
 
     const sortableTable = new SortableTable(header, {
-      url: `/api/rest/orders`,
+      url: `/api/rest/orders?createdAt_gte=${from.toISOString()}&createdAt_lte=${to.toISOString()}`,
       isSortLocally: false,
       start:0,
-      step: 10,
+      step: this.rowCount,
     });
 
     const rangePicker = new RangePicker({
@@ -76,6 +70,23 @@ export default class Page {
     });
   }
 
+  initEventListeners () {
+    this.components.rangePicker.element.addEventListener('date-select', this.updateTableComponent);
+  }
+
+  updateTableComponent = async (event) => { console.log(event.target);
+    const { from, to } = event.detail;
+    const { url } = this.components.ordersContainer;
+
+    url.searchParams.set('createdAt_gte', from.toISOString());
+    url.searchParams.set('createdAt_lte', to.toISOString());
+
+    this.components.ordersContainer.start = 1;
+    this.components.ordersContainer.end = this.rowCount;
+
+    await this.components.ordersContainer.getData();
+  }
+
   getSubElements ($element) {
     const elements = $element.querySelectorAll('[data-element]');
 
@@ -87,7 +98,8 @@ export default class Page {
   }
 
   destroy () {
-
+    for (const component of Object.values(this.components)) {
+      component.destroy();
+    }
   }
-
 }
