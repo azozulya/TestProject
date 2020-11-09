@@ -48,13 +48,21 @@ export default class SortableTable {
     if (clientHeight >= documentBottom && !this.loading && this.isSortOnServer) {
       this.loading = true;
       const data = await this.loadData();
-      this.data = [...this.data, ...data];
-      this.update(this.data);
-      this.loading = false;
+      if (data.length > 0) {
+        this.data = [...this.data, ...data];
+        this.update(this.data);
+        this.loading = false;
+      } else {
+        this.subElements.emptyPlaceholder.setAttribute('style', "display:block;text-align:center;font-size:16px;padding: 15px; border-top: solid 1px #ccc;");
+      }
+
     }
   }
 
   async getData () {
+    this.loading = false;
+    this.subElements.emptyPlaceholder.style.display = 'none';
+
     const data = await this.loadData();
     this.data = [...data];
     this.update(data);
@@ -102,6 +110,9 @@ export default class SortableTable {
     if (!arrow)
       currentSortItem.append(this.subElements.arrow);
 
+    this.loading = false;
+    this.subElements.emptyPlaceholder.style.display = 'none';
+
     if (this.isSortOnServer) {
       this.sortOnServer(id, toggleSort(order));
     } else {
@@ -130,7 +141,7 @@ export default class SortableTable {
     }, {});
   }
 
-  template() {
+   template() {
     return `
       <div data-element="productsContainer" class="products-list__container">
         <div class="sortable-table">
@@ -138,6 +149,9 @@ export default class SortableTable {
             ${this.getHeader(this.header)}
           </div>
           <div data-element="body" class="sortable-table__body"></div>
+          <div data-element="emptyPlaceholder" class="sortable-table__empty-placeholder">
+            No products
+          </div>
         </div>
         </div>
       </div>

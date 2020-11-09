@@ -9,6 +9,7 @@ export default class Page {
   element;
   subElements = {};
   components = {};
+  rowCount = 10;
 
   async getDataForColumnCharts (from, to) {
     const ORDERS = `${process.env.BACKEND_URL}api/dashboard/orders?from=${from.toISOString()}&to=${to.toISOString()}`;
@@ -25,7 +26,7 @@ export default class Page {
 
   async updateTableComponent (from, to) {
     const { field, order } = this.components.sortableTable.sorted;
-    const data = await fetchJson(`${process.env.BACKEND_URL}api/dashboard/bestsellers?_sort=${field}&_order=${order}&_start=1&_end=20&from=${from.toISOString()}&to=${to.toISOString()}&`);
+    const data = await fetchJson(`${process.env.BACKEND_URL}api/dashboard/bestsellers?_sort=${field}&_order=${order}&_start=1&_end=${this.rowCount}&from=${from.toISOString()}&to=${to.toISOString()}`);
     this.components.sortableTable.addTable(data);
   }
 
@@ -52,7 +53,9 @@ export default class Page {
 
     const sortableTable = new SortableTable(header, {
       url: `api/dashboard/bestsellers?_start=1&_end=20&from=${from.toISOString()}&to=${to.toISOString()}`,
-      isSortOnServer: false
+      isSortOnServer: false,
+      start: 0,
+      step: this.rowCount
     });
 
     const ordersChart = new ColumnChart({

@@ -8,6 +8,7 @@ export default class Page {
   element;
   subElements = {};
   components = {};
+  rowCount = 10;
 
   async render() {
     const element = document.createElement('div');
@@ -74,7 +75,7 @@ export default class Page {
       url: `/api/rest/products?price_gte=${minPrice}&price_lte=${maxPrice}`,
       isSortLocally: false,
       start:0,
-      step: 10,
+      step: this.rowCount,
     });
 
     this.components.doubleSlider = doubleSlider;
@@ -96,19 +97,15 @@ export default class Page {
 
   updateTableComponent = async (event) => {
     const { from, to } = event.detail;
-    const {url, sorted} = this.components.sortableTable;
-    const { field, order } = sorted;
+    const { url } = this.components.sortableTable;
+
     url.searchParams.set('price_gte', from);
     url.searchParams.set('price_lte', to);
 
-    const newUrl = new URL(`${process.env.BACKEND_URL}api/rest/products?_start=1&_end=20`);
-    newUrl.searchParams.set('price_gte', from);
-    newUrl.searchParams.set('price_lte', to);
-    newUrl.searchParams.set('_sort', field);
-    newUrl.searchParams.set('_order', order);
+    this.components.sortableTable.start = 1;
+    this.components.sortableTable.end = this.rowCount;
 
-    const data = await fetchJson(url);
-    this.components.sortableTable.addTable(data);
+    await this.components.sortableTable.getData();
   }
 
   destroy() {
