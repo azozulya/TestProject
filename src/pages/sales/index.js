@@ -2,13 +2,13 @@ import SortableTable from '../../components/sortable-table';
 import RangePicker from '../../components/range-picker';
 
 import header from '../sales/sales-header';
-import fetchJson from '../../utils/fetch-json';
 
 export default class Page {
   element;
   subElements = {};
   components = {};
   rowCount = 10;
+  name = 'sales';
 
   async render() {
     const element = document.createElement('div');

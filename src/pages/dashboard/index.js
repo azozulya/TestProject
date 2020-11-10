@@ -10,6 +10,7 @@ export default class Page {
   subElements = {};
   components = {};
   rowCount = 10;
+  name = 'dashboard';
 
   async getDataForColumnCharts (from, to) {
     const ORDERS = `${process.env.BACKEND_URL}api/dashboard/orders?from=${from.toISOString()}&to=${to.toISOString()}`;

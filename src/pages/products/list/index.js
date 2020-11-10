@@ -9,6 +9,7 @@ export default class Page {
   subElements = {};
   components = {};
   rowCount = 10;
+  name = 'products';
 
   async render() {
     const element = document.createElement('div');
@@ -37,7 +38,7 @@ export default class Page {
   }
 
   get template () {
-    return `<div class="dashboard">
+    return `<div class="products">
       <div class="content__top-panel">
         <h2 class="page-title">Products</h2>
         <a href="/products/add" class="button-primary">Add product</a>
