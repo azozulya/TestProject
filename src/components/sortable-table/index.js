@@ -12,6 +12,7 @@ export default class SortableTable {
   constructor(header = [], {
     url = "",
     isSortOnServer = true,
+    isEditLink = true,
     sorted = {
       field: header.find(item => item.sortable).id,
       order: 'asc'
@@ -22,6 +23,7 @@ export default class SortableTable {
     this.header = header;
     this.url = new URL(url, BACKEND_URL);
     this.isSortOnServer = isSortOnServer;
+    this.isEditLink = isEditLink;
     this.sorted = sorted;
     this.start = start;
     this.step = step;
@@ -182,15 +184,23 @@ export default class SortableTable {
   }
 
   getTableRow (product) {
-    return `
-      <a href="/products/${product.id}" class="sortable-table__row">
-        ${
-      this.header.map(
-        item => (item.template) ? item.template(product[item.id]) : `<div class="sortable-table__cell">${product[item.id]}</div>`
-      ).join('')
+    const row = this.header.map(item => {
+      return (item.template) ? item.template(product[item.id]) : `<div class="sortable-table__cell">${product[item.id]}</div>`
+    }).join('');
+
+    if (this.isEditLink) {
+      return `
+        <a href="/products/${product.id}" class="sortable-table__row">
+          ${ row }
+        </a>
+      `;
     }
-      </a>
-    `;
+
+    return `
+        <div class="sortable-table__row">
+          ${ row }
+        </div>
+      `;
   }
 
   sortTable(field, order = this.sortDefault.order) {

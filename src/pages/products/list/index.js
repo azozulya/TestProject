@@ -38,29 +38,31 @@ export default class Page {
   }
 
   get template () {
-    return `<div class="products">
-      <div class="content__top-panel">
-        <h2 class="page-title">Products</h2>
-        <a href="/products/add" class="button-primary">Add product</a>
-      </div>
-      <div class="content-box content-box_small">
-        <form class="form-inline">
-          <div class="form-group">
-            <label class="form-label">Сортировать по:</label>
-            <input type="text" data-elem="filterName" class="form-control" placeholder="Название товара">
-          </div>
-          <div class="form-group" data-elem="sliderContainer">
-            <label class="form-label">Цена:</label>
-            <div data-element="doubleSlider">
-            <!-- range-slider components -->
+    return `
+      <div class="products">
+        <div class="content__top-panel">
+          <h2 class="page-title">Products</h2>
+          <a href="/products/add" class="button-primary">Add product</a>
+        </div>
+        <div class="content-box content-box_small">
+          <form class="form-inline">
+            <div class="form-group">
+              <label class="form-label">Сортировать по:</label>
+              <input type="text" data-element="filterName" class="form-control" placeholder="Название товара">
             </div>
-          </div>
-        </form>
+            <div class="form-group" data-elem="sliderContainer">
+              <label class="form-label">Цена:</label>
+              <div data-element="doubleSlider">
+              <!-- range-slider components -->
+              </div>
+            </div>
+          </form>
+        </div>
+        <div data-element="sortableTable">
+          <!-- sortable-table component -->
+        </div>
       </div>
-      <div data-element="sortableTable">
-        <!-- sortable-table component -->
-      </div>
-    </div>`;
+    `;
   }
 
   async initComponents() {
@@ -94,6 +96,22 @@ export default class Page {
 
   initEventListeners () {
     this.components.doubleSlider.element.addEventListener('range-select', this.updateTableComponent);
+    this.subElements.filterName.addEventListener('keyup', this.onChangeInput);
+  }
+
+  onChangeInput = async (event) => {
+    const str = event.target.value;
+
+    if (str.length > 2) {
+      const { url } = this.components.sortableTable;
+
+      url.searchParams.set('title_like', str);
+
+      this.components.sortableTable.start = 1;
+      this.components.sortableTable.end = this.rowCount;
+
+      await this.components.sortableTable.getData();
+    }
   }
 
   updateTableComponent = async (event) => {

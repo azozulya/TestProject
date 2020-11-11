@@ -48,6 +48,7 @@ export default class Page {
     const sortableTable = new SortableTable(header, {
       url: `/api/rest/orders?createdAt_gte=${from.toISOString()}&createdAt_lte=${to.toISOString()}`,
       isSortLocally: false,
+      isEditLink: false,
       start:0,
       step: this.rowCount,
     });
