@@ -4,9 +4,10 @@ const header = [
     title: 'Image',
     sortable: false,
     template: data => {
+      const image = (data && data[0]) ? `<img class="sortable-table-image" alt="Image" src="${data[0].url}">` : '';
       return `
           <div class="sortable-table__cell">
-            <img class="sortable-table-image" alt="Image" src="${data[0].url}">
+            ${ image }
           </div>
         `;
     }

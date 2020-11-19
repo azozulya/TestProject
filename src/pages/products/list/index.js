@@ -56,6 +56,14 @@ export default class Page {
               <!-- range-slider components -->
               </div>
             </div>
+            <div class="form-group">
+              <label class="form-label">Статус:</label>
+              <select class="form-control" data-element="filterStatus">
+                <option value="" selected="">Любой</option>
+                <option value="1">Активный</option>
+                <option value="0">Неактивный</option>
+              </select>
+            </div>
           </form>
         </div>
         <div data-element="sortableTable">
@@ -97,6 +105,23 @@ export default class Page {
   initEventListeners () {
     this.components.doubleSlider.element.addEventListener('range-select', this.updateTableComponent);
     this.subElements.filterName.addEventListener('keyup', this.onChangeInput);
+    this.subElements.filterStatus.addEventListener('change', this.onSelectHandler);
+  }
+
+  onSelectHandler = async (event) => {
+    const optionValue = event.target.value;
+    const { url } = this.components.sortableTable;
+
+    if (optionValue) {
+      url.searchParams.set('status', optionValue);
+    } else {
+      url.searchParams.delete('status');
+    }
+
+    this.components.sortableTable.start = 1;
+    this.components.sortableTable.end = this.rowCount;
+
+    await this.components.sortableTable.getData();
   }
 
   onChangeInput = async (event) => {
@@ -131,5 +156,7 @@ export default class Page {
     for (const component of Object.values(this.components)) {
       component.destroy();
     }
+    this.subElements.filterName.removeEventListener('keyup', this.onChangeInput);
+    this.subElements.filterStatus.removeEventListener('change', this.onSelectHandler);
   }
 }

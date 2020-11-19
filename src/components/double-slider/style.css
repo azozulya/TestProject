@@ -1,3 +1,27 @@
+
+@media screen and (min-width: 1251px) {
+  form.form-inline .form-group {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+  form.form-inline .form-label {
+    margin-bottom: 0; margin-right: 10px;
+    white-space: nowrap;
+  }
+}
+@media screen and (max-width: 1250px) {
+  form .form-label {
+    display: block;
+  }
+}
+
+
+.products form.form-inline {
+  grid-template-columns: 3fr 3fr 2fr;
+  grid-gap: 46px;
+}
+
 .range-slider__inner {
   position: relative;
   display: inline-block;
@@ -56,7 +80,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 0 60px;
+ /* padding: 0 60px;*/
 }
 
 .range-slider > span {
@@ -64,10 +88,10 @@
   font-size: 16px;
   line-height: 24px;
   color: var(--table-grey);
-  width: 60px;
+ /* width: 60px;
   position: absolute;
   top: 50%;
-  transform: translate(0, -50%);
+  transform: translate(0, -50%);*/
 }
 
 .range-slider > span:first-child {
